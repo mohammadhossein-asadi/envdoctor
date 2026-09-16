@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Environments & secrets — never commit these
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# EnvDoctor local state
+.envdoctor.toml
+
+# Tooling workspace artifacts
+.freebuff/
