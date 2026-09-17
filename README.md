@@ -2,13 +2,15 @@
 
 # 🩺 EnvDoctor
 
+### Diagnose Why Any Repository Won't Run — Then Step Into a Clean Environment Where It Just Works
+
 **Diagnose why any repository won't run on your machine — then step into a clean, disposable environment where it just works.**
 
 [![CI](https://github.com/mohammadhossein-asadi/envdoctor/actions/workflows/ci.yml/badge.svg)](https://github.com/mohammadhossein-asadi/envdoctor/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue)](https://www.python.org)
 [![Platforms](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#platform-support)
-[![Code style: ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![type checked: mypy strict](https://img.shields.io/badge/types-mypy--strict-blue)](https://mypy-lang.org)
+[![Code Style: Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Type Checked: mypy strict](https://img.shields.io/badge/types-mypy--strict-blue)](https://mypy-lang.org)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 *No more "works on my machine."*
@@ -17,27 +19,7 @@
 
 ---
 
-## Table of contents
-
-- [The problem](#the-problem)
-- [What it does](#what-it-does)
-- [Installation](#installation)
-- [Quickstart](#quickstart)
-- [CLI reference](#cli-reference)
-- [How it works](#how-it-works)
-- [Platform support](#platform-support)
-- [Safety, secrets & privacy](#safety-secrets--privacy)
-- [Exit codes](#exit-codes)
-- [Troubleshooting](#troubleshooting)
-- [Development](#development)
-- [Roadmap](#roadmap)
-- [Contributing](#contributing)
-- [Security policy](#security-policy)
-- [License](#license)
-
----
-
-## The problem
+## The Problem
 
 > *"It works on my machine."*
 
@@ -46,7 +28,7 @@ Every developer has lost hours to it. A freshly cloned repository fails with a c
 The usual failure modes:
 
 | You hit… | Because… |
-|---|---|
+|:---|:---|
 | `KeyError: 'DATABASE_URL'` | The var is documented in `README.md` line 42 — or not at all |
 | `Unsupported Python version` | `pyproject.toml` requires `>=3.11`, you have 3.10 |
 | `Cannot find module` / `engine not compatible` | `.nvmrc` says 20, you're on 18 |
@@ -55,9 +37,11 @@ The usual failure modes:
 
 EnvDoctor reads what the repository *declares*, probes what your machine *has*, and shows you the gap — with evidence, file/line references, and the exact fix command for **your OS and shell**. And when you just want a clean room, it drops you into an ephemeral container that vanishes the moment you exit.
 
-## What it does
+---
 
-**EnvDoctor mode — diagnosis**
+## What It Does
+
+### EnvDoctor Mode — Diagnosis
 
 - 🔍 Scans `README.md`, `CONTRIBUTING.md`, `docs/`, `scripts/`, `.env.example`, `docker-compose.yml`, `Dockerfile`, `package.json`, `pyproject.toml`, `requirements.txt`, `Makefile`, GitHub Actions, and more
 - 📋 Cross-references every environment variable the repo mentions against your actual shell environment and local `.env`
@@ -66,11 +50,13 @@ EnvDoctor reads what the repository *declares*, probes what your machine *has*, 
 - 📝 Grades onboarding docs: which required variables are documented, where, and what's missing entirely
 - 💡 Every finding carries file:line evidence and an OS-correct fix command (`$env:` on PowerShell, `export` on POSIX)
 
-**TempEnv mode — ephemeral environments**
+### TempEnv Mode — Ephemeral Environments
 
 - 🧊 `envdoctor shell .` → a clean container with the *diagnosed* requirements pre-applied (image inferred from the repo, env vars injected, your code mounted)
 - 🧪 `envdoctor temp python:3.12` → a pure clean room from any image, no diagnosis needed
 - 🧹 Zero leftover state: containers are `--rm`, owned by a label, and reaped automatically — even if your terminal dies mid-session, the next `sweep` cleans up orphans
+
+---
 
 ## Installation
 
@@ -105,6 +91,8 @@ pytest
 
 </details>
 
+---
+
 ## Quickstart
 
 ```bash
@@ -113,22 +101,22 @@ envdoctor check .
 ```
 
 ```text
- Environment variables
-  ✗ MISSING      DATABASE_URL       .env.example:1, README.md:42
-  ✗ MISSING      REDIS_URL          docker-compose.yml:15
-  ! DOCUMENTED-ONLY  API_KEY        set in shell, but not in your .env
-  ✓ PRESENT      DEBUG              .env:3
+  Environment variables
+    ✗ MISSING      DATABASE_URL       .env.example:1, README.md:42
+    ✗ MISSING      REDIS_URL          docker-compose.yml:15
+    ! DOCUMENTED-ONLY  API_KEY        set in shell, but not in your .env
+    ✓ PRESENT      DEBUG              .env:3
 
- Toolchain
-  ✗ python 3.10.11 does not satisfy pyproject.toml requires-python >=3.11
+  Toolchain
+    ✗ python 3.10.11 does not satisfy pyproject.toml requires-python >=3.11
 
- Container
-  ! Docker daemon not reachable — start Docker Desktop to use `shell`/`temp`
-  ! Image python:3.12 in Dockerfile is not pinned by digest
+  Container
+    ! Docker daemon not reachable — start Docker Desktop to use `shell`/`temp`
+    ! Image python:3.12 in Dockerfile is not pinned by digest
 
- Fix suggestions
-  → PowerShell:  $env:DATABASE_URL = "postgresql://…"
-  → Write missing vars to .env:   envdoctor fix . --write
+  Fix suggestions
+    → PowerShell:  $env:DATABASE_URL = "postgresql://…"
+    → Write missing vars to .env:   envdoctor fix . --write
 ```
 
 ```bash
@@ -149,14 +137,16 @@ tempenv ps
 tempenv sweep
 ```
 
-## CLI reference
+---
+
+## CLI Reference
 
 ### `envdoctor check [PATH]`
 
 Diagnose a repository. Default target is the current directory.
 
 | Flag | Effect |
-|---|---|
+|:---|:---|
 | `--json` | Machine-readable report on stdout (stable schema; nothing else printed) |
 | `--strict` | Exit `1` on *any* finding, even info-level — useful as a CI gate |
 | `--only env,toolchain,container,docs` | Run a subset of the four checks |
@@ -185,17 +175,19 @@ List live EnvDoctor environments, stop one by name, or reap all orphaned environ
 
 `tempenv` exposes the identical session engine (`tempenv IMAGE [--mount PATH]`, `ps`, `kill`, `sweep`) without the diagnosis layer.
 
-### Exit codes
+### Exit Codes
 
 | Code | Meaning |
-|---|---|
+|:---|:---|
 | `0` | No problems found |
 | `1` | Findings at/above the severity threshold (`--strict` lowers the bar to any finding) |
 | `2` | Usage error (bad flags, missing path, …) |
 | `3` | No container runtime available for a command that needs one |
 | `4` | Partial results — some checks failed mid-run (always treat as unreliable) |
 
-## How it works
+---
+
+## How It Works
 
 1. **Inventory** — a bounded walk of the repo (respects `.gitignore`, skips heavy directories) classifies files into dotenv, compose, docs, scripts, and language manifests.
 2. **Parsers** — a tolerant dotenv parser (with lints), a small YAML subset parser for compose `environment:`/`env_file:` blocks (no PyYAML dependency), and a doc scanner that extracts `VAR_NAME` mentions with file:line evidence.
@@ -209,10 +201,12 @@ List live EnvDoctor environments, stop one by name, or reap all orphaned environ
 
 See [DESIGN.md](DESIGN.md) for the full architecture.
 
-## Platform support
+---
+
+## Platform Support
 
 | OS | Status | Notes |
-|---|---|---|
+|:---|:---|:---|
 | **Windows** | ✅ First-class | PowerShell-aware fix commands, `py` launcher discovery, works with Docker Desktop; console encoding handled (cp1252-safe output) |
 | **macOS** | ✅ First-class | Docker Desktop, colima, or OrbStack all work |
 | **Linux** | ✅ First-class | Docker or rootless Podman |
@@ -221,7 +215,9 @@ If no runtime is found, EnvDoctor **never crashes or assumes**: it tells you exa
 
 Podman on Windows runs through a WSL2 VM; volume mounts of Windows paths have known limitations — EnvDoctor warns rather than silently mis-mounting.
 
-## Safety, secrets & privacy
+---
+
+## Safety, Secrets & Privacy
 
 - **Local-first**: all analysis runs on your machine. No telemetry, no phoning home. The only network traffic is image pulls you explicitly trigger.
 - **Secrets are never logged** — not in reports, not in JSON output, not in container argv. Env vars are injected through the container API.
@@ -229,7 +225,9 @@ Podman on Windows runs through a WSL2 VM; volume mounts of Windows paths have kn
 - **`.env` is never clobbered**: `fix` merges additively and never touches values that already exist.
 - **Orphan reaping**: every environment is stamped with an owner PID; `sweep` destroys containers whose owner is gone, so a crashed terminal can't leak containers.
 
-## Exit-code-first automation
+---
+
+## Exit-Code-First Automation
 
 `check --json --strict` is designed as a CI gate that enforces your repository's environment contract:
 
@@ -239,6 +237,8 @@ Podman on Windows runs through a WSL2 VM; volume mounts of Windows paths have kn
 - run: envdoctor check . --json --strict
 ```
 
+---
+
 ## Troubleshooting
 
 <details>
@@ -247,19 +247,24 @@ Podman on Windows runs through a WSL2 VM; volume mounts of Windows paths have kn
 - **Windows/macOS**: start Docker Desktop and wait for the whale icon.
 - **Linux**: `sudo systemctl start docker` (or use rootless Podman — EnvDoctor detects it).
 - Check with `docker ps`; if that fails, EnvDoctor's `container` check will print the exact next step for your OS.
+
 </details>
 
 <details>
 <summary>Weird characters in the terminal output (Windows)</summary>
 
 EnvDoctor auto-falls back to ASCII-safe glyphs on consoles that can't render Unicode (e.g. cp1252 `cmd.exe`). If your font still misrenders, a UTF-8-capable terminal (Windows Terminal) is recommended.
+
 </details>
 
 <details>
 <summary><code>check</code> reports a variable I don't recognize</summary>
 
 Every finding cites its evidence (`file:line`). If the mention is a false positive (e.g. an all-caps identifier in prose), it's a scanner tuning issue — please [open an issue](https://github.com/mohammadhossein-asadi/envdoctor/issues) with the file and line.
+
 </details>
+
+---
 
 ## Development
 
@@ -277,6 +282,8 @@ mypy src                    # strict typing
 
 The CI matrix runs **Windows, macOS, and Linux × Python 3.10 and 3.12**, so cross-platform regressions are caught before merge.
 
+---
+
 ## Roadmap
 
 - [ ] **V1** — `pause`/`resume` for environments, plugin API for language ecosystems (Go, Rust, …), `pyproject.toml`-driven configuration
@@ -284,16 +291,33 @@ The CI matrix runs **Windows, macOS, and Linux × Python 3.10 and 3.12**, so cro
 
 Have a use case? [Open an issue](https://github.com/mohammadhossein-asadi/envdoctor/issues) — the scope stays deliberately small: diagnosis + disposable environments, nothing else.
 
+---
+
 ## Contributing
 
 PRs welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup and the ground rules (cross-platform correctness is non-negotiable: every change must be plausibly correct on Windows, macOS, and Linux).
 
-## Security policy
+---
+
+## Security Policy
 
 See [SECURITY.md](SECURITY.md). In short: please report vulnerabilities privately via GitHub Security Advisories rather than public issues.
+
+---
 
 ## License
 
 [MIT](LICENSE) © Mohammadhossein Asadi and contributors.
 
 > **Note:** EnvDoctor is not affiliated with the unrelated [`env-doctor`](https://pypi.org/project/env-doctor/) PyPI package (GPU/AI library diagnosis).
+
+---
+
+<div align="center">
+
+**Mohammadhossein Asadi** — Frontend & Full-Stack Engineer
+
+[![GitHub](https://img.shields.io/badge/GitHub-mohammadhossein--asadi-0a0a0a?style=flat-square&logo=github)](https://github.com/mohammadhossein-asadi)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-mohammadhossein--asadi-0a66c2?style=flat-square&logo=linkedin)](https://linkedin.com/in/mohammadhossein-asadi)
+
+</div>
