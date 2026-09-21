@@ -93,6 +93,18 @@ pytest
 
 ---
 
+## Screenshots
+
+All captured from the documented CLI output (regenerate with `scripts/make-cli-screenshots.py` in the portfolio repo):
+
+| Diagnosis | Dry-run fix |
+|:---:|:---:|
+| ![Diagnosis report](docs/screenshot-1.png) | ![Dry-run fix](docs/screenshot-2.png) |
+| **Ephemeral environment** | **Session management** |
+| ![Ephemeral environment](docs/screenshot-3.png) | ![Session management](docs/screenshot-4.png) |
+
+---
+
 ## Quickstart
 
 ```bash
